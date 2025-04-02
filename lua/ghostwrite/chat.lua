@@ -1,26 +1,19 @@
 local Popup = require("nui.popup")
-local event = require("nui.utils.autocmd").event
+local Layout = require("nui.layout")
 local M = {}
 
 function M.open()
-	local default_bind_opts = { noremap = true, silent = true, nowait = true }
-
-	-- Define the panel width
 	local panel_width = 60
+	local panel_height = vim.o.lines - 3
 
-	-- Create the chat panel popup
-	local chat_panel = Popup({
-		relative = "editor", -- relative to the entire Neovim window
-		position = {
-			row = 1,
-			col = vim.o.columns - panel_width, -- position at the right edge
-		},
+	local output_height = math.floor(panel_height * 0.8)
+	local input_height = panel_height - output_height
+
+	local output_popup = Popup({
 		size = {
 			width = panel_width,
-			height = vim.o.lines - 3, -- leave some room for command/status lines
+			height = output_height,
 		},
-		enter = true,
-		focusable = true,
 		border = {
 			style = "rounded",
 			text = {
@@ -28,18 +21,85 @@ function M.open()
 				top_align = "left",
 			},
 		},
+		enter = false,
+		focusable = false,
 		win_options = {
 			winblend = 10,
-			-- winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
 		},
 	})
-	chat_panel:mount()
 
-	-- Optional: Refresh the panel on VimResized event to reposition if the window changes size.
-	chat_panel:on(event.VimResized, function()
-		chat_panel:unmount()
-		chat_panel:mount()
+	-- Create the interactive input popup.
+	local input_popup = Popup({
+		size = {
+			width = panel_width,
+			height = input_height,
+		},
+		border = {
+			style = "rounded",
+			text = {
+				bottom = " [Enter] send message ",
+				bottom_align = "right",
+			},
+		},
+		enter = true,
+		focusable = true,
+		win_options = {
+			winblend = 10,
+		},
+	})
+
+	local layout = Layout(
+		{
+			relative = "editor",
+			position = {
+				row = 1,
+				col = vim.o.columns - panel_width, -- right side of the screen
+			},
+			size = {
+				width = panel_width,
+				height = panel_height,
+			},
+		},
+		Layout.Box({
+			Layout.Box(output_popup, { size = output_height }),
+			Layout.Box(input_popup, { size = input_height }),
+		}, { dir = "col" })
+	)
+
+	layout:mount()
+
+	-- make output non modifiable
+	vim.bo[output_popup.bufnr].modifiable = false
+
+	-- enter in insert mode
+	vim.schedule(function()
+		vim.cmd("startinsert")
 	end)
+
+	-- start with the input pane focused
+	local current_focus = 2
+
+	-- toggle between output and input using Tab.
+	local function toggle_focus()
+		if current_focus == 1 then
+			vim.api.nvim_set_current_win(input_popup.winid)
+			current_focus = 2
+		else
+			vim.bo[output_popup.bufnr].modifiable = true
+			vim.api.nvim_set_current_win(output_popup.winid)
+			vim.bo[output_popup.bufnr].modifiable = false
+			current_focus = 1
+		end
+	end
+
+	local function close()
+		layout:unmount()
+	end
+
+	output_popup:map("n", "<Tab>", toggle_focus, M.default_bind_opts)
+	input_popup:map("n", "<Tab>", toggle_focus, M.default_bind_opts)
+	output_popup:map("n", "<Esc>", close, M.default_bind_opts)
+	input_popup:map("n", "<Esc>", close, M.default_bind_opts)
 end
 
 return M

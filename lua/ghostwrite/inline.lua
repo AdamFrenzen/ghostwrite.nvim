@@ -2,8 +2,6 @@ local Popup = require("nui.popup")
 local M = {}
 
 function M.open()
-	local default_bind_opts = { noremap = true, silent = true, nowait = true }
-
 	-- get the start of editor, accounts for line number section
 	local function get_text_start_col()
 		local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())
@@ -72,10 +70,10 @@ function M.open()
 			ai_response(line)
 		end
 
-		user_popup:map("n", "o", ignore_key, default_bind_opts)
-		user_popup:map("n", "O", ignore_key, default_bind_opts)
-		user_popup:map("n", "<Esc>", close, default_bind_opts)
-		user_popup:map("i", "<CR>", send, default_bind_opts)
+		user_popup:map("n", "o", ignore_key, M.default_bind_opts)
+		user_popup:map("n", "O", ignore_key, M.default_bind_opts)
+		user_popup:map("n", "<Esc>", close, M.default_bind_opts)
+		user_popup:map("i", "<CR>", send, M.default_bind_opts)
 	end
 
 	user_input()
@@ -114,9 +112,9 @@ function M.open()
 			response_popup:unmount()
 		end
 
-		response_popup:map("n", "y", apply, default_bind_opts)
-		response_popup:map("n", "n", dismiss, default_bind_opts)
-		response_popup:map("n", "<Esc>", dismiss, default_bind_opts)
+		response_popup:map("n", "y", apply, M.default_bind_opts)
+		response_popup:map("n", "n", dismiss, M.default_bind_opts)
+		response_popup:map("n", "<Esc>", dismiss, M.default_bind_opts)
 	end
 end
 
