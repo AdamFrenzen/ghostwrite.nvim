@@ -9,6 +9,11 @@ function M.setup()
 		noremap = true,
 		silent = true,
 	})
+	vim.keymap.set("n", "<leader>Gr", "<cmd>ReloadGhostwrite<cr>", {
+		desc = "Ghostwrite: Reload plugin",
+		noremap = true,
+		silent = true,
+	})
 end
 
 function _G.ReloadGhostwrite()
