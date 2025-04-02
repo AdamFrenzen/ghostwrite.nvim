@@ -1,43 +1,84 @@
 local M = {}
+local Popup = require("nui.popup")
 
+-- Create user commands
 function M.setup()
-	-- Define a Neovim command users can run
-	vim.api.nvim_create_user_command("GhostwritePopup", M.open_popup, {})
+	vim.api.nvim_create_user_command("GhostwriteInline", M.open_popup, {})
+	vim.api.nvim_create_user_command("ReloadGhostwrite", ReloadGhostwrite, {})
+
+	vim.keymap.set("n", "<leader>Gi", "<cmd>GhostwriteInline<cr>", {
+		desc = "Ghostwrite: Inline Chat",
+		noremap = true,
+		silent = true,
+	})
 end
 
-function M.open_popup()
-	-- Create a temporary buffer
-	local buf = vim.api.nvim_create_buf(false, true)
+-- Development: hot-reload the module
+function _G.ReloadGhostwrite()
+	require("plenary.reload").reload_module("ghostwrite")
+	require("ghostwrite").setup()
+	print("🔄 Ghostwrite reloaded!")
+end
 
-	-- Set some lines in the buffer
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
-		"👻 Hello from ghostwrite!",
-		"This is your AI assistant speaking...",
-		"",
-		"Press <Esc> to close this window.",
+-- Utility: Get column offset after line numbers and signs
+local function get_text_start_col()
+	local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())
+	return (wininfo and wininfo[1] and wininfo[1].textoff) or 0
+end
+
+-- Main popup logic
+function M.open_popup()
+	local cursor_line = vim.fn.winline() -- row in window, 1-based
+	local row = math.max(0, cursor_line - 3) -- float slightly above cursor
+	local col_offset = get_text_start_col()
+
+	local popup = Popup({
+		enter = true,
+		focusable = true,
+		border = {
+			style = "rounded",
+			text = {
+				top = " inline-ghostwrite ",
+				top_align = "left",
+			},
+		},
+		position = {
+			row = row,
+			col = col_offset,
+			relative = "win",
+		},
+		size = {
+			width = 80,
+			height = 1,
+		},
+		buf_options = {
+			modifiable = true,
+			readonly = false,
+		},
 	})
 
-	-- Define floating window layout
-	local width = 50
-	local height = 5
-	local row = math.floor((vim.o.lines - height) / 2)
-	local col = math.floor((vim.o.columns - width) / 2)
+	popup:mount()
 
-	local opts = {
-		style = "minimal",
-		relative = "editor",
-		width = width,
-		height = height,
-		row = row,
-		col = col,
-		border = "rounded",
-	}
+	-- Enter insert mode after mount
+	vim.schedule(function()
+		vim.cmd("startinsert")
+	end)
 
-	-- Open the window
-	local win = vim.api.nvim_open_win(buf, true, opts)
+	-- Disable newlines
+	vim.keymap.set("n", "o", "<Nop>", { buffer = popup.bufnr, noremap = true })
+	vim.keymap.set("n", "O", "<Nop>", { buffer = popup.bufnr, noremap = true })
 
-	-- Optional: Close it on <Esc>
-	vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", "<cmd>bd!<CR>", { nowait = true, noremap = true, silent = true })
+	-- Handle <Enter>: print input, then close popup
+	vim.keymap.set("i", "<CR>", function()
+		local line = vim.api.nvim_buf_get_lines(popup.bufnr, 0, 1, false)[1] or ""
+		print("💬", line)
+		popup:unmount()
+	end, { buffer = popup.bufnr, noremap = true })
+
+	-- Close on <Esc>
+	popup:map("n", "<Esc>", function()
+		popup:unmount()
+	end, { noremap = true })
 end
 
 return M
