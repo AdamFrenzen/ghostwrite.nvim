@@ -62,6 +62,14 @@ function M.open()
 	user_input()
 
 	ai_response = function(line)
+		local lines = {
+			"👤 " .. line,
+			"",
+			"🤖 AI response...",
+			"[a] Apply  [p] Promote  [x] Dismiss",
+		}
+		local count = #lines
+
 		local popup = Popup({
 			enter = true,
 			focusable = true,
@@ -73,13 +81,13 @@ function M.open()
 				},
 			},
 			position = {
-				row = row,
+				row = row - count + 1,
 				col = col_offset,
 				relative = "win",
 			},
 			size = {
 				width = 80,
-				height = 1,
+				height = count,
 			},
 			buf_options = {
 				modifiable = true,
@@ -89,12 +97,11 @@ function M.open()
 
 		popup:mount()
 
-		vim.api.nvim_buf_set_lines(popup.bufnr, 0, -1, false, {
-			"👤 " .. line,
-			"",
-			"🤖 AI response...",
-			"[a] Apply  [p] Promote  [x] Dismiss",
-		})
+		vim.api.nvim_buf_set_lines(popup.bufnr, 0, -1, false, lines)
+
+		popup:map("n", "<Esc>", function()
+			popup:unmount()
+		end, { noremap = true })
 	end
 end
 
