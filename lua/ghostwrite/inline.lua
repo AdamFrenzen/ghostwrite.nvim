@@ -40,6 +40,7 @@ function M.open()
 			buf_options = {
 				modifiable = true,
 				readonly = false,
+				bufhidden = "wipe",
 			},
 		}
 	end
