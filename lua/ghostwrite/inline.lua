@@ -1,107 +1,122 @@
 local Popup = require("nui.popup")
 local M = {}
 
-local function get_text_start_col()
-	local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())
-	return (wininfo and wininfo[1] and wininfo[1].textoff) or 0
-end
-
 function M.open()
+	local default_bind_opts = { noremap = true, silent = true, nowait = true }
+
+	-- get the start of editor, accounts for line number section
+	local function get_text_start_col()
+		local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())
+		return (wininfo and wininfo[1] and wininfo[1].textoff) or 0
+	end
+
 	local cursor_line = vim.fn.winline()
-	local row = math.max(0, cursor_line - 3)
 	local col_offset = get_text_start_col()
+	local row = math.max(0, cursor_line - 3)
 
-	local ai_response -- forward declare
+	-- forward declare
+	local ai_response
 
-	local function user_input()
-		local popup = Popup({
+	local function popup(opts)
+		return {
 			enter = true,
 			focusable = true,
 			border = {
 				style = "rounded",
 				text = {
-					top = " inline-ghostwrite ",
+					top = " 󰊠 ghostwrite-inline ",
 					top_align = "left",
+					bottom = opts.bottom or "",
+					bottom_align = "right",
 				},
 			},
 			position = {
-				row = row,
-				col = col_offset,
+				row = opts.row or 0,
+				col = opts.col or 0,
 				relative = "win",
 			},
 			size = {
-				width = 80,
-				height = 1,
+				width = opts.width or 80,
+				height = opts.height or 1,
 			},
 			buf_options = {
 				modifiable = true,
 				readonly = false,
 			},
-		})
+		}
+	end
 
-		popup:mount()
+	local function user_input()
+		local user_popup = Popup(popup({
+			bottom = " [Enter] send [Esc] cancel ",
+			row = row,
+			col = col_offset,
+			height = 1,
+		}))
+		user_popup:mount()
 
+		-- enter in insert mode
 		vim.schedule(function()
 			vim.cmd("startinsert")
 		end)
 
-		vim.keymap.set("n", "o", "<Nop>", { buffer = popup.bufnr, noremap = true })
-		vim.keymap.set("n", "O", "<Nop>", { buffer = popup.bufnr, noremap = true })
+		local function ignore_key() end
 
-		popup:map("n", "<Esc>", function()
-			popup:unmount()
-		end, { noremap = true })
+		local function close()
+			user_popup:unmount()
+		end
 
-		vim.keymap.set("i", "<CR>", function()
-			local line = vim.api.nvim_buf_get_lines(popup.bufnr, 0, 1, false)[1] or ""
-			popup:unmount()
+		local function send()
+			local line = vim.api.nvim_buf_get_lines(user_popup.bufnr, 0, 1, false)[1] or ""
+			user_popup:unmount()
 			ai_response(line)
-		end, { noremap = true })
+		end
+
+		user_popup:map("n", "o", ignore_key, default_bind_opts)
+		user_popup:map("n", "O", ignore_key, default_bind_opts)
+		user_popup:map("n", "<Esc>", close, default_bind_opts)
+		user_popup:map("i", "<CR>", send, default_bind_opts)
 	end
 
 	user_input()
 
 	ai_response = function(line)
 		local lines = {
-			"👤 " .. line,
-			"",
-			"🤖 AI response...",
-			"[a] Apply  [p] Promote  [x] Dismiss",
+			" " .. line,
+			"󰊠 `print(data)` is displaying data",
 		}
 		local count = #lines
 
-		local popup = Popup({
-			enter = true,
-			focusable = true,
-			border = {
-				style = "rounded",
-				text = {
-					top = " inline-ghostwrite ",
-					top_align = "left",
-				},
-			},
-			position = {
-				row = row - count + 1,
-				col = col_offset,
-				relative = "win",
-			},
-			size = {
-				width = 80,
-				height = count,
-			},
-			buf_options = {
-				modifiable = true,
-				readonly = false,
-			},
-		})
+		local response_popup = Popup(popup({
+			bottom = " [y] apply  [n] dismiss  [o] expand to chat ",
+			row = row - count + 1,
+			col = col_offset,
+			height = count,
+		}))
+		response_popup:mount()
 
-		popup:mount()
+		-- write response into popup
+		vim.bo[response_popup.bufnr].modifiable = true
+		vim.api.nvim_buf_set_lines(response_popup.bufnr, 0, -1, false, lines)
+		vim.bo[response_popup.bufnr].modifiable = false
 
-		vim.api.nvim_buf_set_lines(popup.bufnr, 0, -1, false, lines)
+		-- enter in normal mode
+		vim.defer_fn(function()
+			vim.cmd("stopinsert")
+		end, 10) -- delay by 10ms
 
-		popup:map("n", "<Esc>", function()
-			popup:unmount()
-		end, { noremap = true })
+		local function apply()
+			print("eventually ghostwrite will apply those suggestions")
+			response_popup:unmount()
+		end
+
+		local function dismiss()
+			response_popup:unmount()
+		end
+
+		response_popup:map("n", "y", apply, default_bind_opts)
+		response_popup:map("n", "n", dismiss, default_bind_opts)
+		response_popup:map("n", "<Esc>", dismiss, default_bind_opts)
 	end
 end
 
