@@ -2,10 +2,16 @@ local M = {}
 
 function M.setup()
 	vim.api.nvim_create_user_command("GhostwriteInline", require("ghostwrite.inline").open, {})
+	vim.api.nvim_create_user_command("GhostwriteChat", require("ghostwrite.chat").open, {})
 	vim.api.nvim_create_user_command("ReloadGhostwrite", ReloadGhostwrite, {})
 
 	vim.keymap.set("n", "<leader>Gi", "<cmd>GhostwriteInline<cr>", {
 		desc = "Ghostwrite: Inline Chat",
+		noremap = true,
+		silent = true,
+	})
+	vim.keymap.set("n", "<leader>Gc", "<cmd>GhostwriteChat<cr>", {
+		desc = "Ghostwrite: Reload plugin",
 		noremap = true,
 		silent = true,
 	})
