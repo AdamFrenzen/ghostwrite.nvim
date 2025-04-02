@@ -3,12 +3,12 @@
 **WIP – deeply integrated AI assistant for Neovim.**  
 Powered by Ollama. Local-first (offline + private + free). Keyboard-native.
 
-## Progress Updates:
+### Progress Updates:
 - Finalized plugin plan
 - Plugin boilerplate
 - Inline popup (UI only)
 
-## Todo:
+### Todo:
 - Chat panel UI
 - Visual selection interaction
 - Code diff UI
