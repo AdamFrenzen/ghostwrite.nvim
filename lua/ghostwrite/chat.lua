@@ -1,81 +1,38 @@
-local Popup = require("nui.popup")
 local Layout = require("nui.layout")
+local ChatOutput = require("ghostwrite.chat_output")
+local ChatInput = require("ghostwrite.chat_input")
 local M = {}
+
+local chat_panel = {}
+chat_panel.width = 60
+chat_panel.height = vim.o.lines - 3
+chat_panel.output_height = math.floor(chat_panel.height * 0.8)
+chat_panel.input_height = chat_panel.height - chat_panel.output_height
 
 local ghostwrite_output_popup
 local ghostwrite_input_popup
 local ghostwrite_chat_panel
 
 function M.open()
-	local panel_width = 60
-	local panel_height = vim.o.lines - 3
-
-	local output_height = math.floor(panel_height * 0.8)
-	local input_height = panel_height - output_height
-
-	if ghostwrite_chat_panel then
-		ghostwrite_chat_panel:show()
-	else
-		local output_popup = Popup({
-			size = {
-				width = panel_width,
-				height = output_height,
-			},
-			border = {
-				style = "rounded",
-				text = {
-					top = " 󰊠 ghostwrite-chat ",
-					top_align = "left",
-					bottom = " [↑] [Tab] [↓] ",
-					bottom_align = "center",
-				},
-			},
-			enter = false,
-			focusable = false,
-			buf_options = { bufhidden = "hide" },
-			win_options = {
-				winblend = 10,
-			},
-		})
-
-		-- Create the interactive input popup.
-		local input_popup = Popup({
-			size = {
-				width = panel_width,
-				height = input_height,
-			},
-			border = {
-				style = "rounded",
-				text = {
-					top = "  input ",
-					top_align = "left",
-					bottom = " [Enter] send message ",
-					bottom_align = "right",
-				},
-			},
-			enter = true,
-			focusable = true,
-			buf_options = { bufhidden = "hide" },
-			win_options = {
-				winblend = 10,
-			},
-		})
+	if not ghostwrite_chat_panel then
+		local output_popup = ChatOutput.create(chat_panel)
+		local input_popup = ChatInput.create(chat_panel)
 
 		local layout = Layout(
 			{
 				relative = "editor",
 				position = {
 					row = 1,
-					col = vim.o.columns - panel_width, -- right side of the screen
+					col = vim.o.columns - chat_panel.width, -- right side of the screen
 				},
 				size = {
-					width = panel_width,
-					height = panel_height,
+					width = chat_panel.width,
+					height = chat_panel.height,
 				},
 			},
 			Layout.Box({
-				Layout.Box(output_popup, { size = output_height }),
-				Layout.Box(input_popup, { size = input_height }),
+				Layout.Box(output_popup, { size = chat_panel.output_height }),
+				Layout.Box(input_popup, { size = chat_panel.input_height }),
 			}, { dir = "col" })
 		)
 
@@ -85,26 +42,13 @@ function M.open()
 		ghostwrite_output_popup = output_popup
 		ghostwrite_input_popup = input_popup
 		ghostwrite_chat_panel = layout
-
-		print("CREATED PANEL!!")
+	else -- chat panel has been previously created, we want to reopen
+		ghostwrite_chat_panel:show()
 	end
 
 	local input_popup = ghostwrite_input_popup
 	local output_popup = ghostwrite_output_popup
 	local layout = ghostwrite_chat_panel
-
-	-- add some text in here to test
-
-	vim.bo[output_popup.bufnr].modifiable = true
-	vim.api.nvim_buf_set_lines(output_popup.bufnr, -1, -1, false, { " 󰊠 wuz here " })
-
-	-- make output non modifiable
-	vim.bo[output_popup.bufnr].modifiable = false
-
-	-- enter in insert mode
-	vim.schedule(function()
-		vim.cmd("startinsert")
-	end)
 
 	-- start with the input pane focused
 	local current_focus = 2
