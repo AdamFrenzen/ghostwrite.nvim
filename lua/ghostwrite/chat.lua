@@ -26,6 +26,8 @@ function M.open()
 				text = {
 					top = " 󰊠 ghostwrite-chat ",
 					top_align = "left",
+					bottom = " [↑] [Tab] [↓] ",
+					bottom_align = "center",
 				},
 			},
 			enter = false,
@@ -45,6 +47,8 @@ function M.open()
 			border = {
 				style = "rounded",
 				text = {
+					top = "  input ",
+					top_align = "left",
 					bottom = " [Enter] send message ",
 					bottom_align = "right",
 				},
@@ -105,7 +109,7 @@ function M.open()
 	-- start with the input pane focused
 	local current_focus = 2
 
-	-- toggle between output and input using Tab.
+	-- toggle between output and input
 	local function toggle_focus()
 		if current_focus == 1 then
 			vim.api.nvim_set_current_win(input_popup.winid)
@@ -122,8 +126,13 @@ function M.open()
 		layout:hide()
 	end
 
-	output_popup:map("n", "<Tab>", toggle_focus, M.default_bind_opts)
-	input_popup:map("n", "<Tab>", toggle_focus, M.default_bind_opts)
+	-- set toggle keys for both popups
+	for _, popup in ipairs({ output_popup, input_popup }) do
+		popup:map("n", "<Up>", toggle_focus, M.default_bind_opts)
+		popup:map("n", "<Down>", toggle_focus, M.default_bind_opts)
+		popup:map("n", "<Tab>", toggle_focus, M.default_bind_opts)
+	end
+
 	output_popup:map("n", "<Esc>", close, M.default_bind_opts)
 	input_popup:map("n", "<Esc>", close, M.default_bind_opts)
 end
