@@ -1,23 +1,18 @@
 # 👻 ghostwrite.nvim
 
-**WIP – deeply integrated AI assistant for Neovim.**  
+**🚧 WIP – deeply integrated AI assistant for Neovim.**  
 Powered by Ollama. Local-first (offline + private + free). Keyboard-native.
 
-### Progress Updates:
-- Finalized plugin plan
-- Plugin boilerplate
-- Inline popup (UI only)
+**🎯 Projected Release Date: March 1, 2025**
 
-### Todo:
-- Chat panel UI
-- Visual selection interaction
-- Code diff UI
-- Code completion UI
-- Create Rust project
-- Ollama Rust integration
-- Rust to UI bridge
-- ...
+---
 
-## Planning:
+**✅ Progress:** Finalized plugin plan, Plugin boilerplate, Inline popup (UI only), Chat panel (UI only).
+
+**⏳ Todo:** Visual selection interaction, Code diff UI, Code completion UI, Create Rust project, Ollama Rust integration, Rust to UI bridge, and more.
+
+---
+
+## ⭐️ Planning Notes:
 
 ![UX Sketch](assets/ghostwrite-plan.png)
