@@ -14,7 +14,7 @@ function M.open()
 	local row = math.max(0, cursor_line - 3)
 
 	-- forward declare
-	local ai_response
+	local get_dummy_ai_response
 
 	local function popup(opts)
 		return {
@@ -69,7 +69,7 @@ function M.open()
 		local function send()
 			local line = vim.api.nvim_buf_get_lines(user_popup.bufnr, 0, 1, false)[1] or ""
 			user_popup:unmount()
-			ai_response(line)
+			get_dummy_ai_response(line)
 		end
 
 		user_popup:map("n", "o", ignore_key, config.default_bind_opts)
@@ -80,7 +80,7 @@ function M.open()
 
 	user_input()
 
-	ai_response = function(line)
+	get_dummy_ai_response = function(line)
 		local lines = {
 			" " .. line,
 			"󰊠 `print(data)` is displaying data",
