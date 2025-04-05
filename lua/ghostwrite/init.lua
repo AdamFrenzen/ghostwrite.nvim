@@ -1,4 +1,5 @@
 local config = require("ghostwrite.config")
+local has_which_key, which_key = pcall(require, "which-key")
 local M = {}
 
 function M.setup(opts)
@@ -39,6 +40,17 @@ function M.setup(opts)
 			desc = "Ghostwrite: Chat Panel",
 		})
 	)
+
+	-- add commands to which-key
+	if has_which_key then
+		which_key.add({
+			{ "<leader>G", group = "Ghostwrite", icon = { icon = "󰊠", color = "purple" } },
+
+			{ "<leader>Gi", cmd = "<cmd>GhostwriteInline<cr>", desc = "Inline Chat" },
+			{ "<leader>Gc", cmd = "<cmd>GhostwriteChat<cr>", desc = "Chat Panel" },
+			{ "<leader>Gr", cmd = "<cmd>ReloadGhostwrite<cr>", desc = "Reload Plugin" },
+		})
+	end
 end
 
 function _G.ReloadGhostwrite()
