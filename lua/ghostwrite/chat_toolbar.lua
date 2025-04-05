@@ -31,7 +31,7 @@ function M.create(chat_panel)
 		end,
 	}
 
-	local context_buttons = {
+	local context_items = {
 		{
 			label = "main.rs:10-20",
 			action_is_delete = true,
@@ -54,8 +54,8 @@ function M.create(chat_panel)
 	-- add single buttons
 	table.insert(M.all_buttons, template_button)
 	table.insert(M.all_buttons, context_button)
-	-- add buttons from context_buttons
-	for _, button in ipairs(context_buttons) do
+	-- add buttons from conttext_items
+	for _, button in ipairs(context_items) do
 		table.insert(M.all_buttons, button)
 	end
 
@@ -76,7 +76,7 @@ function M.create(chat_panel)
 		context_button.end_col = visual_len - #": " -- again, accounting for ": " bytes
 
 		-- add context buttons
-		for i, btn in ipairs(context_buttons) do
+		for i, btn in ipairs(context_items) do
 			if i > 1 then
 				table.insert(line_parts, ", ")
 				visual_len = #table.concat(line_parts)
@@ -171,6 +171,7 @@ function M.on_focus(winid)
 end
 
 function M.on_unfocus()
+	-- remove the button highlight when focus switches
 	M.draw_toolbar()
 end
 
