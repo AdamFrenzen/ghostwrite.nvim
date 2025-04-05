@@ -1,3 +1,4 @@
+local config = require("ghostwrite.config").get()
 local Layout = require("nui.layout")
 local ChatOutput = require("ghostwrite.chat_output")
 local ChatToolbar = require("ghostwrite.chat_toolbar")
@@ -143,11 +144,11 @@ function M.open()
 	-- set shared keys for all popups
 	for _, pane in ipairs(panes) do
 		-- pane movement
-		pane.popup:map("n", "<Up>", focus_up, M.default_bind_opts)
-		pane.popup:map("n", "<Down>", focus_down, M.default_bind_opts)
-		pane.popup:map("n", "<Tab>", focus_up, M.default_bind_opts)
+		pane.popup:map("n", "<Up>", focus_up, config.default_bind_opts)
+		pane.popup:map("n", "<Down>", focus_down, config.default_bind_opts)
+		pane.popup:map("n", "<Tab>", focus_up, config.default_bind_opts)
 		-- exit
-		pane.popup:map("n", "<Esc>", close_panel, M.default_bind_opts)
+		pane.popup:map("n", "<Esc>", close_panel, config.default_bind_opts)
 	end
 end
 

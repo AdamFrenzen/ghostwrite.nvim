@@ -1,3 +1,4 @@
+local config = require("ghostwrite.config").get()
 local Popup = require("nui.popup")
 local M = {}
 
@@ -71,10 +72,10 @@ function M.open()
 			ai_response(line)
 		end
 
-		user_popup:map("n", "o", ignore_key, M.default_bind_opts)
-		user_popup:map("n", "O", ignore_key, M.default_bind_opts)
-		user_popup:map("n", "<Esc>", close, M.default_bind_opts)
-		user_popup:map("i", "<CR>", send, M.default_bind_opts)
+		user_popup:map("n", "o", ignore_key, config.default_bind_opts)
+		user_popup:map("n", "O", ignore_key, config.default_bind_opts)
+		user_popup:map("n", "<Esc>", close, config.default_bind_opts)
+		user_popup:map("i", "<CR>", send, config.default_bind_opts)
 	end
 
 	user_input()
@@ -113,9 +114,9 @@ function M.open()
 			response_popup:unmount()
 		end
 
-		response_popup:map("n", "y", apply, M.default_bind_opts)
-		response_popup:map("n", "n", dismiss, M.default_bind_opts)
-		response_popup:map("n", "<Esc>", dismiss, M.default_bind_opts)
+		response_popup:map("n", "y", apply, config.default_bind_opts)
+		response_popup:map("n", "n", dismiss, config.default_bind_opts)
+		response_popup:map("n", "<Esc>", dismiss, config.default_bind_opts)
 	end
 end
 
