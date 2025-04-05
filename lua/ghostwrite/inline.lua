@@ -87,7 +87,7 @@ function M.open()
 		local count = #lines
 
 		local response_popup = Popup(popup({
-			bottom = " [y] apply  [n] dismiss  [o] expand to chat ",
+			bottom = " [y] apply  [n] dismiss  [→] move to chat ",
 			row = row - count + 1,
 			col = col_offset,
 			height = count,
