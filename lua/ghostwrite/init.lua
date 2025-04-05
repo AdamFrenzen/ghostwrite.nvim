@@ -42,6 +42,18 @@ function M.setup(opts)
 		})
 	)
 
+	-- save visual command keys so we can alert if they overlap
+	local visual_command_keys = {}
+	local function add_command_key(key)
+		for _, v in ipairs(visual_command_keys) do
+			if v == key then
+				error("ghostwrite: visual mode command key overlap, remove duplicate keys from config")
+			end
+		end
+
+		table.insert(visual_command_keys, key)
+	end
+
 	-- open chat panel with visual selection as context
 	vim.keymap.set(
 		"v",
@@ -54,6 +66,7 @@ function M.setup(opts)
 			desc = "Open In Chat Panel",
 		})
 	)
+	add_command_key("c")
 
 	-- open inline chat with visual selection as context
 	vim.keymap.set(
@@ -67,8 +80,10 @@ function M.setup(opts)
 			desc = "Open In Inline Chat",
 		})
 	)
+	add_command_key("i")
 
-	local function action(key, desc, prompt)
+	for key, action in pairs(config.get().prompt_templates) do
+		add_command_key(key)
 		-- open inline chat with visual selection and bypass user input with a preset prompt
 		vim.keymap.set(
 			"v",
@@ -79,13 +94,10 @@ function M.setup(opts)
 				-- inline.lua call for sending user input
 			end,
 			vim.tbl_extend("force", bind_opts, {
-				desc = "" .. desc,
+				desc = "" .. action.desc,
 			})
 		)
 	end
-	action("f", "Fix Selected Code", "Determine what is wrong and fix this %{language} code from %{filename}:")
-	action("e", "Explain Selected Code", "Explain this %{language} code from %{filename}:")
-	action("c", "Comment Selected Code", "Add comments to this %{language} code from %{filename}:")
 
 	-- add commands to which-key
 	if has_which_key then
