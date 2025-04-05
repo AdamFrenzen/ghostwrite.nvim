@@ -7,7 +7,7 @@ function M.setup(opts)
 	config.setup(opts)
 
 	vim.api.nvim_create_user_command("ReloadGhostwrite", ReloadGhostwrite, {})
-	vim.api.nvim_create_user_command("GhostwriteInline", require("ghostwrite.inline").open, {})
+	vim.api.nvim_create_user_command("GhostwriteInline", require("ghostwrite.inline").get_user_input, {})
 	vim.api.nvim_create_user_command("GhostwriteChat", require("ghostwrite.chat").open, {})
 
 	local bind_opts = config.get().default_bind_opts
