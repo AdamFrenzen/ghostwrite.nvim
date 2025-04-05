@@ -47,7 +47,11 @@ function M.setup(opts)
 	local function add_command_key(key)
 		for _, v in ipairs(visual_command_keys) do
 			if v == key then
-				error("ghostwrite: visual mode command key overlap, remove duplicate keys from config")
+				error(
+					"ghostwrite: visual mode command key overlap at <leader>G"
+						.. key
+						.. ". Remove or change duplicate in config."
+				)
 			end
 		end
 
@@ -55,6 +59,7 @@ function M.setup(opts)
 	end
 
 	-- open chat panel with visual selection as context
+	add_command_key("c")
 	vim.keymap.set(
 		"v",
 		"<leader>Gc",
@@ -66,9 +71,9 @@ function M.setup(opts)
 			desc = "Open In Chat Panel",
 		})
 	)
-	add_command_key("c")
 
 	-- open inline chat with visual selection as context
+	add_command_key("i")
 	vim.keymap.set(
 		"v",
 		"<leader>Gi",
@@ -80,11 +85,10 @@ function M.setup(opts)
 			desc = "Open In Inline Chat",
 		})
 	)
-	add_command_key("i")
 
 	for key, action in pairs(config.get().prompt_templates) do
-		add_command_key(key)
 		-- open inline chat with visual selection and bypass user input with a preset prompt
+		add_command_key(key)
 		vim.keymap.set(
 			"v",
 			"<leader>G" .. key,
