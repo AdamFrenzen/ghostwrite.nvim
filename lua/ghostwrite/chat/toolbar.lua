@@ -163,12 +163,12 @@ function M.on_focus(winid)
 		M.all_buttons[selected_button_index].action()
 	end
 
-	M.toolbar_popup:map("n", "<Left>", select_left, config.default_bind_opts)
-	M.toolbar_popup:map("n", "h", select_left, config.default_bind_opts)
-	M.toolbar_popup:map("n", "<Right>", select_right, config.default_bind_opts)
-	M.toolbar_popup:map("n", "l", select_right, config.default_bind_opts)
+	M.toolbar_popup:map("n", "<Left>", select_left, config.default_keybind_opts)
+	M.toolbar_popup:map("n", "h", select_left, config.default_keybind_opts)
+	M.toolbar_popup:map("n", "<Right>", select_right, config.default_keybind_opts)
+	M.toolbar_popup:map("n", "l", select_right, config.default_keybind_opts)
 
-	M.toolbar_popup:map("n", "<Cr>", select, config.default_bind_opts)
+	M.toolbar_popup:map("n", "<Cr>", select, config.default_keybind_opts)
 end
 
 function M.on_unfocus()

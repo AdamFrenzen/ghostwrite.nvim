@@ -144,11 +144,11 @@ function M.open()
 	-- set shared keys for all popups
 	for _, pane in ipairs(panes) do
 		-- pane movement
-		pane.popup:map("n", "<Up>", focus_up, config.default_bind_opts)
-		pane.popup:map("n", "<Down>", focus_down, config.default_bind_opts)
-		pane.popup:map("n", "<Tab>", focus_up, config.default_bind_opts)
+		pane.popup:map("n", "<Up>", focus_up, config.default_keybind_opts)
+		pane.popup:map("n", "<Down>", focus_down, config.default_keybind_opts)
+		pane.popup:map("n", "<Tab>", focus_up, config.default_keybind_opts)
 		-- exit
-		pane.popup:map("n", "<Esc>", close_panel, config.default_bind_opts)
+		pane.popup:map("n", "<Esc>", close_panel, config.default_keybind_opts)
 	end
 end
 

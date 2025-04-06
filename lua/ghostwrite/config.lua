@@ -1,7 +1,7 @@
 local M = {}
 
 local defaults = {
-	default_bind_opts = { noremap = true, silent = true, nowait = true },
+	default_keybind_opts = { noremap = true, silent = true, nowait = true },
 	-- Visual selection LLM actions
 	actions = {
 		-- Supported prompt %{var} placeholders: language, filename

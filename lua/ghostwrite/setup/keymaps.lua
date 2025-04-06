@@ -3,7 +3,7 @@ local utils = require("ghostwrite.utils")
 local M = {}
 
 function M.register()
-	local keybind_opts = config.default_bind_opts
+	local keybind_opts = config.default_keybind_opts
 
 	-- Reload Ghostwrite plugin without restarting Neovim (for development)
 	vim.keymap.set(

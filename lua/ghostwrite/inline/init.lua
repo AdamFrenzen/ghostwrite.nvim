@@ -34,10 +34,10 @@ function M.get_user_input(context)
 		M.send_user_input(input, context)
 	end
 
-	user_popup:map("n", "o", noop_key, config.default_bind_opts)
-	user_popup:map("n", "O", noop_key, config.default_bind_opts)
-	user_popup:map("n", "<Esc>", close, config.default_bind_opts)
-	user_popup:map("i", "<CR>", send, config.default_bind_opts)
+	user_popup:map("n", "o", noop_key, config.default_keybind_opts)
+	user_popup:map("n", "O", noop_key, config.default_keybind_opts)
+	user_popup:map("n", "<Esc>", close, config.default_keybind_opts)
+	user_popup:map("i", "<CR>", send, config.default_keybind_opts)
 end
 
 function M.send_user_input(prompt, context)
@@ -99,10 +99,10 @@ function M.display_llm_output(prompt, response)
 		-- response_popup.unmount()
 	end
 
-	response_popup:map("n", "y", accept, config.default_bind_opts)
-	response_popup:map("n", "n", dismiss, config.default_bind_opts)
-	response_popup:map("n", "<Right>", move_to_chat, config.default_bind_opts)
-	response_popup:map("n", "<Esc>", dismiss, config.default_bind_opts)
+	response_popup:map("n", "y", accept, config.default_keybind_opts)
+	response_popup:map("n", "n", dismiss, config.default_keybind_opts)
+	response_popup:map("n", "<Right>", move_to_chat, config.default_keybind_opts)
+	response_popup:map("n", "<Esc>", dismiss, config.default_keybind_opts)
 end
 
 return M
