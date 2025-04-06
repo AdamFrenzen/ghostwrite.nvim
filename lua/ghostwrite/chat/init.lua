@@ -1,8 +1,8 @@
 local config = require("ghostwrite.config").get()
 local Layout = require("nui.layout")
-local ChatOutput = require("ghostwrite.chat_output")
-local ChatToolbar = require("ghostwrite.chat_toolbar")
-local ChatInput = require("ghostwrite.chat_input")
+local ChatOutput = require("ghostwrite.chat.output")
+local ChatToolbar = require("ghostwrite.chat.toolbar")
+local ChatInput = require("ghostwrite.chat.input")
 local M = {}
 
 local chat_panel_config = {}

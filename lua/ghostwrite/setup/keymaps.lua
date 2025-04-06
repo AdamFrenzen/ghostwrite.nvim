@@ -80,7 +80,7 @@ function M.register()
 		})
 	)
 
-	for key, action in pairs(config.get().prompt_templates) do
+	for key, action in pairs(config.prompt_templates) do
 		-- open inline chat with visual selection and bypass user input with a preset prompt
 		add_command_key(key)
 		vim.keymap.set(
