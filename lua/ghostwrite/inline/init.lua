@@ -1,57 +1,10 @@
 local config = require("ghostwrite.config").get()
-local Popup = require("nui.popup")
+local popup = require("ghostwrite.inline.popup")
 local M = {}
 
-function M.get_popup_position()
-	local function get_text_start_col()
-		local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())
-		if wininfo and wininfo[1] and wininfo[1].textoff then
-			return wininfo[1].textoff
-		end
-		return 0 -- fallback when textoff is unavailable
-	end
-
-	local cursor_line = vim.fn.winline()
-
-	return {
-		col_offset = get_text_start_col(), -- ← includes line numbers, signs, folds
-		row = math.max(0, cursor_line - 3),
-	}
-end
-
-function M.open_inline_popup(opts)
-	return Popup({
-		enter = true,
-		focusable = true,
-		border = {
-			style = "rounded",
-			text = {
-				top = " 󰊠 ghostwrite-inline ",
-				top_align = "left",
-				bottom = opts.bottom or "",
-				bottom_align = "right",
-			},
-		},
-		position = {
-			row = opts.row or 0,
-			col = opts.col or 0,
-			relative = "win",
-		},
-		size = {
-			width = opts.width or 80,
-			height = opts.height or 1,
-		},
-		buf_options = {
-			modifiable = true,
-			readonly = false,
-			bufhidden = "wipe",
-		},
-	})
-end
-
 function M.get_user_input(context) -- optional context
-	local popup_position = M.get_popup_position()
-	local user_popup = M.open_inline_popup({
+	local popup_position = popup.get_popup_position()
+	local user_popup = popup.open_inline_popup({
 		bottom = " [Enter] send [Esc] cancel ",
 		row = popup_position.row,
 		col = popup_position.col_offset,
@@ -87,18 +40,20 @@ function M.send_user_input(prompt, context)
 		context = require("ghostwrite.utils").get_inline_context() -- cursor line, file, etc.
 	end
 
-	M.recieve_ai_output(prompt)
+	M.receive_ai_output(prompt)
 end
 
-function M.recieve_ai_output(prompt)
+-- function M.loading_spinner
+
+function M.receive_ai_output(prompt)
 	local lines = {
 		" " .. prompt,
 		"󰊠 `print(data)` is displaying data",
 	}
 	local count = #lines
 
-	local popup_position = M.get_popup_position()
-	local response_popup = M.open_inline_popup({
+	local popup_position = popup.get_popup_position()
+	local response_popup = popup.open_inline_popup({
 		bottom = " [y] apply  [n] dismiss  [→] move to chat ",
 		row = popup_position.row - count + 1,
 		col = popup_position.col_offset,
