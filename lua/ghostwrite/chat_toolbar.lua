@@ -1,3 +1,4 @@
+local config = require("ghostwrite.config").get()
 local Popup = require("nui.popup")
 local M = {}
 
@@ -162,12 +163,12 @@ function M.on_focus(winid)
 		M.all_buttons[selected_button_index].action()
 	end
 
-	M.toolbar_popup:map("n", "<Left>", select_left, M.default_bind_opts)
-	M.toolbar_popup:map("n", "h", select_left, M.default_bind_opts)
-	M.toolbar_popup:map("n", "<Right>", select_right, M.default_bind_opts)
-	M.toolbar_popup:map("n", "l", select_right, M.default_bind_opts)
+	M.toolbar_popup:map("n", "<Left>", select_left, config.default_bind_opts)
+	M.toolbar_popup:map("n", "h", select_left, config.default_bind_opts)
+	M.toolbar_popup:map("n", "<Right>", select_right, config.default_bind_opts)
+	M.toolbar_popup:map("n", "l", select_right, config.default_bind_opts)
 
-	M.toolbar_popup:map("n", "<Cr>", select, M.default_bind_opts)
+	M.toolbar_popup:map("n", "<Cr>", select, config.default_bind_opts)
 end
 
 function M.on_unfocus()
