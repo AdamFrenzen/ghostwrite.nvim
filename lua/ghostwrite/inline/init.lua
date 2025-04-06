@@ -3,8 +3,8 @@ local popup = require("ghostwrite.inline.popup")
 local M = {}
 
 function M.get_user_input(context) -- optional context
-	local popup_position = popup.get_popup_position()
-	local user_popup = popup.open_inline_popup({
+	local popup_position = popup.get_position()
+	local user_popup = popup.open({
 		bottom = " [Enter] send [Esc] cancel ",
 		row = popup_position.row,
 		col = popup_position.col_offset,
@@ -40,20 +40,20 @@ function M.send_user_input(prompt, context)
 		context = require("ghostwrite.utils").get_inline_context() -- cursor line, file, etc.
 	end
 
-	M.receive_ai_output(prompt)
+	M.display_ai_output(prompt)
 end
 
 -- function M.loading_spinner
 
-function M.receive_ai_output(prompt)
+function M.display_ai_output(prompt)
 	local lines = {
 		" " .. prompt,
 		"󰊠 `print(data)` is displaying data",
 	}
 	local count = #lines
 
-	local popup_position = popup.get_popup_position()
-	local response_popup = popup.open_inline_popup({
+	local popup_position = popup.get_position()
+	local response_popup = popup.open({
 		bottom = " [y] apply  [n] dismiss  [→] move to chat ",
 		row = popup_position.row - count + 1,
 		col = popup_position.col_offset,

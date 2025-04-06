@@ -1,7 +1,7 @@
 local Popup = require("nui.popup")
 local M = {}
 
-function M.get_popup_position()
+function M.get_position()
 	local function get_text_start_col()
 		local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())
 		if wininfo and wininfo[1] and wininfo[1].textoff then
@@ -18,7 +18,7 @@ function M.get_popup_position()
 	}
 end
 
-function M.open_inline_popup(opts)
+function M.open(opts)
 	return Popup({
 		enter = true,
 		focusable = true,
