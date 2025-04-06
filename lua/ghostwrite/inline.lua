@@ -49,7 +49,7 @@ function M.open_inline_popup(opts)
 	})
 end
 
-function M.get_user_input()
+function M.get_user_input(context) -- optional context
 	local popup_position = M.get_popup_position()
 	local user_popup = M.open_inline_popup({
 		bottom = " [Enter] send [Esc] cancel ",
@@ -73,7 +73,7 @@ function M.get_user_input()
 	local function send()
 		local input = vim.api.nvim_buf_get_lines(user_popup.bufnr, 0, 1, false)[1] or ""
 		user_popup:unmount()
-		M.send_user_input(input)
+		M.send_user_input(input, context)
 	end
 
 	user_popup:map("n", "o", ignore_key, config.default_bind_opts)
@@ -83,6 +83,10 @@ function M.get_user_input()
 end
 
 function M.send_user_input(prompt, context)
+	if not context then
+		context = require("ghostwrite.utils").get_inline_context() -- cursor line, file, etc.
+	end
+
 	M.recieve_ai_output(prompt)
 end
 

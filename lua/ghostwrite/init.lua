@@ -65,7 +65,8 @@ function M.setup(opts)
 		"<leader>Gc",
 		function()
 			local selection = utils.get_visual_metadata()
-			-- inline.lua call for attaching context to inline chat
+			-- TODO: set up chat context
+			-- require("ghostwrite.chat").open(selection)
 		end,
 		vim.tbl_extend("force", bind_opts, {
 			desc = "Open In Chat Panel",
@@ -78,8 +79,8 @@ function M.setup(opts)
 		"v",
 		"<leader>Gi",
 		function()
-			local selection = utils.get_visual_metadata()
-			-- inline.lua call for attaching context to inline chat
+			local selection_context = utils.get_visual_metadata()
+			require("ghostwrite.inline").get_user_input(selection_context)
 		end,
 		vim.tbl_extend("force", bind_opts, {
 			desc = "Open In Inline Chat",
@@ -94,8 +95,13 @@ function M.setup(opts)
 			"<leader>G" .. key,
 			function()
 				local selection = utils.get_visual_metadata()
-				-- inline.lua call for attaching context to inline chat
-				-- inline.lua call for sending user input
+
+				local prompt = utils.interpolate_template(action.prompt, {
+					language = selection.language,
+					filename = selection.filename,
+				})
+
+				require("ghostwrite.inline").send_user_input(prompt, selection)
 			end,
 			vim.tbl_extend("force", bind_opts, {
 				desc = "" .. action.desc,
