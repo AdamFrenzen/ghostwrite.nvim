@@ -1,8 +1,8 @@
 local config = require("ghostwrite.config").get()
 local Layout = require("nui.layout")
-local ChatOutput = require("ghostwrite.chat_output")
-local ChatToolbar = require("ghostwrite.chat_toolbar")
-local ChatInput = require("ghostwrite.chat_input")
+local ChatOutput = require("ghostwrite.chat.output")
+local ChatToolbar = require("ghostwrite.chat.toolbar")
+local ChatInput = require("ghostwrite.chat.input")
 local M = {}
 
 local chat_panel_config = {}
@@ -14,13 +14,14 @@ chat_panel_config.input_pane_height = (
 	chat_panel_config.height - (chat_panel_config.output_pane_height + chat_panel_config.toolbar_pane_height)
 )
 
--- persistent chat state
+-- Persistent chat state
 local ghostwrite_chat_panel
 local ghostwrite_output_popup
 local ghostwrite_toolbar_popup
 local ghostwrite_input_popup
 
 function M.open()
+	-- Chat panel does not already exist (no persisted state), therefore we want to create it
 	if not ghostwrite_chat_panel then
 		local output_popup = ChatOutput.create(chat_panel_config)
 		local toolbar_popup = ChatToolbar.create(chat_panel_config)
@@ -31,7 +32,7 @@ function M.open()
 				relative = "editor",
 				position = {
 					row = 1,
-					col = vim.o.columns - chat_panel_config.width, -- right side of the screen
+					col = vim.o.columns - chat_panel_config.width, -- Right side of the screen
 				},
 				size = {
 					width = chat_panel_config.width,
@@ -52,7 +53,7 @@ function M.open()
 		ghostwrite_toolbar_popup = toolbar_popup
 		ghostwrite_input_popup = input_popup
 		ghostwrite_chat_panel = chat_panel
-	else -- chat panel has been previously created, therefore we want to reopen
+	else -- Chat panel has been previously created, therefore we want to reopen
 		ghostwrite_chat_panel:show()
 	end
 
@@ -77,9 +78,13 @@ function M.open()
 		-- [3] input pane
 		{
 			popup = input_popup,
+			on_focus = function(winid)
+				-- ChatInput.on_focus()
+			end,
 		},
 	}
-	-- start with the input pane focused
+
+	-- Start with the input pane focused
 	local current_focus = 3
 
 	local function safely_focus_win(winid, bufnr)
@@ -95,25 +100,30 @@ function M.open()
 	local function set_focus(target_focus)
 		local pane = panes[target_focus]
 
-		-- unfocus previous pane
+		-- Unfocus previous pane
 		if panes[current_focus].on_unfocus then
 			panes[current_focus].on_unfocus()
 		end
 
-		-- set win to the popup
+		-- Set win to the popup
 		safely_focus_win(pane.popup.winid, pane.popup.bufnr)
 
-		-- trigger focus hook
+		-- Trigger focus hook
 		if pane.on_focus then
 			pane.on_focus(pane.popup.winid)
 		end
 
-		-- update focus
+		-- Update focus
 		current_focus = target_focus
 	end
 
-	-- init focus
+	-- Init focus
 	set_focus(current_focus)
+
+	-- Enter input popup in insert mode
+	vim.schedule(function()
+		vim.cmd("startinsert")
+	end)
 
 	local function focus_up()
 		local new_focus = nil
@@ -141,14 +151,14 @@ function M.open()
 		layout:hide()
 	end
 
-	-- set shared keys for all popups
+	-- Set shared keys for all popups
 	for _, pane in ipairs(panes) do
-		-- pane movement
-		pane.popup:map("n", "<Up>", focus_up, config.default_bind_opts)
-		pane.popup:map("n", "<Down>", focus_down, config.default_bind_opts)
-		pane.popup:map("n", "<Tab>", focus_up, config.default_bind_opts)
-		-- exit
-		pane.popup:map("n", "<Esc>", close_panel, config.default_bind_opts)
+		-- Pane focus movement
+		pane.popup:map("n", "<Up>", focus_up, config.default_keybind_opts)
+		pane.popup:map("n", "<Down>", focus_down, config.default_keybind_opts)
+		pane.popup:map("n", "<Tab>", focus_up, config.default_keybind_opts)
+		-- Exit
+		pane.popup:map("n", "<Esc>", close_panel, config.default_keybind_opts)
 	end
 end
 

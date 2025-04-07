@@ -37,7 +37,7 @@ function M.create(chat_panel)
 			label = "main.rs:10-20",
 			action_is_delete = true,
 			action = function()
-				-- eventually remove the file from context here
+				-- Eventually remove the file from context here
 				print("main.rs")
 			end,
 		},
@@ -45,17 +45,17 @@ function M.create(chat_panel)
 			label = "init.lua",
 			action_is_delete = true,
 			action = function()
-				-- eventually remove the file from context here
+				-- Eventually remove the file from context here
 				print("init.lua")
 			end,
 		},
 	}
 
 	M.all_buttons = {}
-	-- add single buttons
+	-- Add single buttons
 	table.insert(M.all_buttons, template_button)
 	table.insert(M.all_buttons, context_button)
-	-- add buttons from conttext_items
+	-- Add buttons from conttext_items
 	for _, button in ipairs(context_items) do
 		table.insert(M.all_buttons, button)
 	end
@@ -64,19 +64,19 @@ function M.create(chat_panel)
 		local line_parts = {}
 		local visual_len = 0
 
-		-- add [templates] button
+		-- Add [templates] button
 		table.insert(line_parts, " " .. template_button.label .. " ")
 		template_button.start_col = #" " -- leading padding space
 		visual_len = #table.concat(line_parts)
 		template_button.end_col = visual_len - #" " -- minus the trailing space bytes
 
-		-- add [context] button
+		-- Add [context] button
 		table.insert(line_parts, context_button.label .. ": ")
 		context_button.start_col = visual_len
 		visual_len = #table.concat(line_parts)
 		context_button.end_col = visual_len - #": " -- again, accounting for ": " bytes
 
-		-- add context buttons
+		-- Add context buttons
 		for i, btn in ipairs(context_items) do
 			if i > 1 then
 				table.insert(line_parts, ", ")
@@ -94,16 +94,16 @@ function M.create(chat_panel)
 
 	vim.bo[toolbar_popup.bufnr].modifiable = true
 
-	-- add the toolbar text and change the text color to blend in
+	-- Add the toolbar text and change the text color to blend in
 	local function draw_toolbar()
 		vim.api.nvim_buf_set_lines(toolbar_popup.bufnr, 0, 1, false, { build_line() })
-		-- highlight the toolbar
+		-- Highlight the toolbar
 		vim.highlight.range(
 			toolbar_popup.bufnr,
 			vim.api.nvim_create_namespace("ghostwrite_toolbar_text"),
-			"FloatBorder", -- make text same color as the nui borders
-			{ 0, 0 }, -- start: line 0, col 0
-			{ 0, -1 }, -- end: line 0, col -1 (to end of line)
+			"FloatBorder", -- Make text same color as the nui borders
+			{ 0, 0 }, -- Start: line 0, col 0
+			{ 0, -1 }, -- End: line 0, col -1 (to end of line)
 			{ inclusive = true }
 		)
 	end
@@ -115,14 +115,14 @@ function M.create(chat_panel)
 end
 
 function M.on_focus(winid)
-	-- move cursor onto button
+	-- Move cursor onto button
 	local function set_cursor(index)
 		if winid then
 			vim.api.nvim_win_set_cursor(winid, { 1, M.all_buttons[index].start_col })
 		end
 	end
 
-	-- highlight selected button
+	-- Highlight selected button
 	vim.api.nvim_set_hl(0, "GhostwriteRedBackground", { bg = "#8b2c2c" })
 	local ns_id = vim.api.nvim_create_namespace("ghostwrite_toolbar_text_select")
 	local selected_button_index = 1
@@ -163,16 +163,16 @@ function M.on_focus(winid)
 		M.all_buttons[selected_button_index].action()
 	end
 
-	M.toolbar_popup:map("n", "<Left>", select_left, config.default_bind_opts)
-	M.toolbar_popup:map("n", "h", select_left, config.default_bind_opts)
-	M.toolbar_popup:map("n", "<Right>", select_right, config.default_bind_opts)
-	M.toolbar_popup:map("n", "l", select_right, config.default_bind_opts)
+	M.toolbar_popup:map("n", "<Left>", select_left, config.default_keybind_opts)
+	M.toolbar_popup:map("n", "h", select_left, config.default_keybind_opts)
+	M.toolbar_popup:map("n", "<Right>", select_right, config.default_keybind_opts)
+	M.toolbar_popup:map("n", "l", select_right, config.default_keybind_opts)
 
-	M.toolbar_popup:map("n", "<Cr>", select, config.default_bind_opts)
+	M.toolbar_popup:map("n", "<Cr>", select, config.default_keybind_opts)
 end
 
 function M.on_unfocus()
-	-- remove the button highlight when focus switches
+	-- Remove the button highlight when focus switches
 	M.draw_toolbar()
 end
 
