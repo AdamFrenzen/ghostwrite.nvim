@@ -24,11 +24,6 @@ function M.create(chat_panel)
 		},
 	})
 
-	-- enter in insert mode
-	vim.schedule(function()
-		vim.cmd("startinsert")
-	end)
-
 	return input_popup
 end
 

@@ -30,7 +30,7 @@ function M.get_visual_metadata()
 		},
 	}
 
-	-- if buffer has unsaved changes, include full buffer content
+	-- If buffer has unsaved changes, include full buffer content
 	if vim.bo.modified then
 		context.buffer = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 	end
@@ -52,7 +52,7 @@ function M.get_inline_context()
 		language = language,
 		range = {
 			start = { line = line, col = 1 },
-			["end"] = { line = line, col = -1 }, -- single line
+			["end"] = { line = line, col = -1 }, -- Single line
 		},
 	}
 
