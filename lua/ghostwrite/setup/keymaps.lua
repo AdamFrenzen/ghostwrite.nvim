@@ -15,6 +15,26 @@ function M.register()
 		})
 	)
 
+	-- Show a test diff (for development of the diff feature)
+	vim.keymap.set(
+		"n",
+		"<leader>Gd",
+		"<cmd>GhostwriteDiffTest<cr>",
+		vim.tbl_extend("force", keybind_opts, {
+			desc = "Reload Plugin", -- which-key command label
+		})
+	)
+
+	-- Clear the test diff (for development of the diff feature)
+	vim.keymap.set(
+		"n",
+		"<leader>Gs",
+		"<cmd>GhostwriteDiffTestClear<cr>",
+		vim.tbl_extend("force", keybind_opts, {
+			desc = "Reload Plugin", -- which-key command label
+		})
+	)
+
 	-- Open the inline chat popup
 	vim.keymap.set(
 		"n",

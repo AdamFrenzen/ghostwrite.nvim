@@ -22,6 +22,13 @@ function M.register()
 	vim.api.nvim_create_user_command("GhostwriteChat", require("ghostwrite.chat").open, {
 		desc = "Open Ghostwrite side panel chat",
 	})
+
+	vim.api.nvim_create_user_command("GhostwriteDiffTest", require("ghostwrite.diff").show_diff, {
+		desc = "Show a test diff",
+	})
+	vim.api.nvim_create_user_command("GhostwriteDiffTestClear", require("ghostwrite.diff").clear_diff, {
+		desc = "Clear the test diff",
+	})
 end
 
 return M
