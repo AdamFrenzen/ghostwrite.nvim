@@ -1,4 +1,6 @@
 local M = {}
+-- Namespace for the diff visuals
+local ns_id = vim.api.nvim_create_namespace("ghostwrite_diff_inline")
 
 -- Define highlight groups for diff visualization
 
@@ -67,7 +69,6 @@ end
 
 function M.show_diff() -- In the future we'll pass `diff` through params
 	local diff = get_diff()
-	local ns_id = vim.api.nvim_create_namespace("ghostwrite_diff_inline")
 	local bufnr = vim.api.nvim_get_current_buf()
 	local line_number = diff.current.line
 
@@ -127,8 +128,7 @@ end
 -- Clear all diffs in the current buffer
 function M.clear_diff()
 	local bufnr = vim.api.nvim_get_current_buf()
-	local ns_id = vim.api.nvim_create_namespace("ghostwrite_diff_inline")
-	-- Eventually can have this clear only specific diffs by changing 0, -1 (start, end)
+	-- Eventually can have this clear only specific diffs by modifying 0, -1 (start, end)
 	vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
 end
 
