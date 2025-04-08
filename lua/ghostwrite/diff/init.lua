@@ -1,4 +1,5 @@
 local M = {}
+local diff_keybinds = require("ghostwrite.diff.keybinds")
 -- Namespace for the diff visuals
 local ns_id = vim.api.nvim_create_namespace("ghostwrite_diff_inline")
 
@@ -41,11 +42,11 @@ local function get_diff()
 	-- Returns:
 	-- {
 	--   current = {
-	--     line = <number>,
+	--     line = <number>, -- 0 based
 	--     segments = { { text = <string>, tag = "same" | "diff" }, ... },
 	--   },
 	--   suggested = {
-	--     line = <number>,
+	--     line = <number>, -- 0 based
 	--     segments = { { text = <string>, tag = "same" | "diff" }, ... },
 	--   },
 	-- }
@@ -70,7 +71,7 @@ end
 function M.show_diff() -- In the future we'll pass `diff` through params
 	local diff = get_diff()
 	local bufnr = vim.api.nvim_get_current_buf()
-	local line_number = diff.current.line
+	local line_number = diff.current.line -- 0 based
 
 	local hl_map = {
 		current = {
@@ -123,6 +124,7 @@ function M.show_diff() -- In the future we'll pass `diff` through params
 
 	highlight_current_line()
 	render_suggested_line()
+	diff_keybinds.attach_line_listener(line_number)
 end
 
 -- Clear all diffs in the current buffer
@@ -130,6 +132,7 @@ function M.clear_diff()
 	local bufnr = vim.api.nvim_get_current_buf()
 	-- Eventually can have this clear only specific diffs by modifying 0, -1 (start, end)
 	vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
+	diff_keybinds.remove_line_listener()
 end
 
 return M

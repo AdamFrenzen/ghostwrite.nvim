@@ -19,6 +19,13 @@ local defaults = {
 		},
 	},
 	model = "LLM-model-here",
+	-- Default keymaps for accepting and rejecting diffs
+	-- These override Vim's default 'Y' (yank to EOL) and 'N' (previous search result).
+	-- Change these if you want to avoid those overrides.
+	diff_keybinds = {
+		accept_key = "Y",
+		reject_key = "N",
+	},
 }
 
 local user_config = {}
