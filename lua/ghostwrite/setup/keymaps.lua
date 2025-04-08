@@ -99,7 +99,7 @@ function M.register()
 				require("ghostwrite.inline").send_user_input(prompt, selection)
 			end,
 			vim.tbl_extend("force", keybind_opts, {
-				desc = action.desc, -- Config defined action commmand label for which-key
+				desc = action.label, -- Config defined action commmand label for which-key
 			})
 		)
 	end
