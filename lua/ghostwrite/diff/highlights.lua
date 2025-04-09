@@ -29,3 +29,14 @@ vim.api.nvim_set_hl(0, "GhostwriteDiffHelper", {
 	bg = "#3b245a", -- dark royal purple
 	fg = "#707070", -- dark gray
 })
+
+return {
+	current = {
+		same = "GhostwriteDiffRed",
+		diff = "GhostwriteDiffRedBright",
+	},
+	suggested = {
+		same = "GhostwriteDiffGreen",
+		diff = "GhostwriteDiffGreenBright",
+	},
+}
