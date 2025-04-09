@@ -48,8 +48,8 @@ local function get_diff()
 	}
 end
 
-function M.show_diff() -- In the future we'll pass `diff` through params
-	local diff = get_diff()
+function M.show_diff(diff)
+	diff = get_diff() -- Temporary dummy data call
 	local bufnr = vim.api.nvim_get_current_buf()
 	local line_number = diff.current.line -- 0 based
 
@@ -112,7 +112,7 @@ function M.clear_diff()
 	local bufnr = vim.api.nvim_get_current_buf()
 	-- Eventually can have this clear only specific diffs by modifying 0, -1 (start, end)
 	vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
-	diff_keybinds.remove_line_listener()
+	diff_keybinds.remove_line_listener(bufnr, ns_id)
 end
 
 return M
