@@ -7,9 +7,9 @@ Powered by Ollama. Local-first (offline + private + free). Keyboard-native.
 
 ---
 
-**✅ Progress:** Finalized plugin plan, Plugin boilerplate, Inline popup (UI only), Chat panel (UI only).
+**✅ Progress:** Finalized plugin plan, Plugin boilerplate, Inline popup (UI only), Chat panel (UI only), Visual selection interaction, Code diff UI.
 
-**⏳ Todo:** Visual selection interaction, Code diff UI, Code completion UI, Create Rust project, Ollama Rust integration, Rust to UI bridge, and more.
+**⏳ Todo:** Code completion UI, Create Rust project, Ollama Rust integration, Rust to UI bridge, and more.
 
 ---
 
