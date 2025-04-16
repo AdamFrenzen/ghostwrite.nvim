@@ -21,7 +21,7 @@ function M.register()
 		"<leader>Gd",
 		"<cmd>GhostwriteDiffTest<cr>",
 		vim.tbl_extend("force", keybind_opts, {
-			desc = "Reload Plugin", -- which-key command label
+			desc = "Generate test diff", -- which-key command label
 		})
 	)
 
@@ -31,7 +31,7 @@ function M.register()
 		"<leader>Gs",
 		"<cmd>GhostwriteDiffTestClear<cr>",
 		vim.tbl_extend("force", keybind_opts, {
-			desc = "Reload Plugin", -- which-key command label
+			desc = "Remove the test diffs", -- which-key command label
 		})
 	)
 

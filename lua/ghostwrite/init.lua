@@ -7,6 +7,8 @@ function M.setup(opts)
 	require("ghostwrite.setup.commands").register()
 	require("ghostwrite.setup.keymaps").register()
 	require("ghostwrite.setup.whichkey").register()
+	require("ghostwrite.diff.manager")
+	require("ghostwrite.diff.watcher").start()
 end
 
 return M

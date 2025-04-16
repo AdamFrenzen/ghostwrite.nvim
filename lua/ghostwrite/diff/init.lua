@@ -1,5 +1,4 @@
 local highlights = require("ghostwrite.diff.highlights")
-local diff_keybinds = require("ghostwrite.diff.keybinds")
 
 local Diff = {}
 Diff.__index = Diff
@@ -14,13 +13,11 @@ function Diff:new(opts)
 		suggested = opts.suggested,
 		--
 		state = "pending",
-		bufnr = opts.bufnr or vim.api.nvim_get_current_buf(),
-		ns_id = opts.ns_id or vim.api.nvim_create_namespace("ghostwrite_diff_" .. opts.id),
+		bufnr = vim.api.nvim_get_current_buf(),
+		ns_id = vim.api.nvim_create_namespace("ghostwrite_diff_" .. opts.id),
 	}, self)
 
 	diff:render()
-	diff:start_watching_line()
-
 	return diff
 end
 
@@ -77,7 +74,6 @@ end
 
 function Diff:clear()
 	vim.api.nvim_buf_clear_namespace(self.bufnr, self.ns_id, 0, -1)
-	diff_keybinds.remove_line_listener(self.bufnr, self.ns_id)
 end
 
 return Diff

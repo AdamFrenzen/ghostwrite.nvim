@@ -1,3 +1,4 @@
+local manager = require("ghostwrite.diff.manager")
 local Diff = require("ghostwrite.diff")
 local M = {}
 
@@ -16,7 +17,6 @@ function M.mock_diff()
 	-- Returns:
 	-- {
 	--   id = <number>, -- simple, sequential integer ID (e.g. 1, 2, 3, ...)
-	--   id = <string>, -- unique ID assigned by the Rust backend (e.g. "diff-1")
 	--   file = <string>, -- path to the file where the diff applies
 	--   start_line = <number>, -- 0-based start line of the diff (inclusive)
 	--   end_line = <number>,   -- 0-based end line of the diff (inclusive)
@@ -41,10 +41,10 @@ function M.mock_diff()
 	-- }
 
 	local diff_data = {
-		id = 1, -- assigned by Rust, should be a string
-		file = "example.lua", -- new: required by your Diff constructor
-		start_line = 0, -- new: required
-		end_line = 0, -- new: required (same as start_line for single-line diff)
+		id = 1,
+		file = "example.lua",
+		start_line = 0,
+		end_line = 0,
 		current = {
 			[0] = { -- 0-based line index
 				segments = {
@@ -64,6 +64,7 @@ function M.mock_diff()
 	}
 
 	local diff = Diff:new(diff_data)
+	manager.add(diff)
 end
 
 return M

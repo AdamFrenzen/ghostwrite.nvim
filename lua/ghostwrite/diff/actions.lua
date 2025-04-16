@@ -1,10 +1,10 @@
 local M = {}
 
-function M.accept()
+function M.accept(id)
 	print("ACCEPTED")
 end
 
-function M.reject()
+function M.reject(id)
 	print("REJECTED")
 end
 

@@ -1,34 +1,38 @@
-local DiffManager = {}
-DiffManager.__index = DiffManager
+local watcher = require("ghostwrite.diff.watcher")
 
-function DiffManager:new()
-	return setmetatable({
-		diffs = {}, -- key = id, value = Diff instance
-	}, self)
-end
+local M = {}
 
-function DiffManager:add(diff)
-	self.diffs[diff.id] = diff
+M.diffs = {}
+
+function M.add(diff)
+	M.diffs[diff.id] = diff
+	watcher.update()
 	return diff.id
 end
 
-function DiffManager:clear_all()
-	for _, diff in pairs(self.diffs) do
-		diff:clear()
-	end
-	self.diffs = {}
-end
-
-function DiffManager:remove(id)
-	local diff = self.diffs[id]
+function M.remove(id)
+	local diff = M.diffs[id]
 	if diff then
 		diff:clear()
-		self.diffs[id] = nil
+		M.diffs[id] = nil
+		watcher.update()
 	end
 end
 
-function DiffManager:get(id)
-	return self.diffs[id]
+function M.clear_all()
+	for _, diff in pairs(M.diffs) do
+		diff:clear()
+	end
+	M.diffs = {}
+	watcher.update()
 end
 
-return DiffManager
+function M.get(id)
+	return M.diffs[id]
+end
+
+function M.get_all()
+	return M.diffs
+end
+
+return M
