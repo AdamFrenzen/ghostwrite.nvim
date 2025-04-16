@@ -65,6 +65,44 @@ function M.mock_diff()
 
 	local diff = Diff:new(diff_data)
 	manager.add(diff)
+
+	local diff_data2 = {
+		id = 2,
+		file = "example.lua",
+		start_line = 9,
+		end_line = 10,
+		current = {
+			[9] = { -- 0-based line index
+				segments = {
+					{ text = "local", tag = "diff" },
+					{ text = " M = {}", tag = "same" },
+				},
+			},
+			[10] = {
+				segments = {
+					{ text = "change", tag = "diff" },
+					{ text = " M = {}", tag = "same" },
+				},
+			},
+		},
+		suggested = {
+			[9] = {
+				segments = {
+					{ text = "change", tag = "diff" },
+					{ text = " M = {}", tag = "same" },
+				},
+			},
+			[10] = {
+				segments = {
+					{ text = "change", tag = "diff" },
+					{ text = " M = {}", tag = "same" },
+				},
+			},
+		},
+	}
+
+	local diff2 = Diff:new(diff_data2)
+	manager.add(diff2)
 end
 
 return M

@@ -1,11 +1,11 @@
 local M = {}
 
 function M.accept(id)
-	print("ACCEPTED")
+	print("ACCEPTED", id)
 end
 
 function M.reject(id)
-	print("REJECTED")
+	print("REJECTED", id)
 end
 
 return M
