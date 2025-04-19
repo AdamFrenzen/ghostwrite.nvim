@@ -1,4 +1,4 @@
-local Diff = require("ghostwrite.diff.diff2rename")
+local Diff = require("ghostwrite.diff.Diff")
 
 local M = {}
 
