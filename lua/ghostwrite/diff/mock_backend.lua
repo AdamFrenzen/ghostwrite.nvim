@@ -1,5 +1,3 @@
-local manager = require("ghostwrite.diff.manager")
-local Diff = require("ghostwrite.diff")
 local M = {}
 
 -- Dummy get_diff() for diff testing
@@ -8,25 +6,26 @@ function M.mock_diff()
 	local diff_res = {
 		files = {
 			["example.lua"] = {
-				{
-					id = 1,
-					start_line = 0, -- 0-based, inclusive
-					end_line = 1, -- 0-based, exclusive
-					new_lines = {
-						"change M = {}",
+				diffs = {
+					{
+						id = 1,
+						start_line = 0, -- 0-based, inclusive
+						end_line = 1, -- 0-based, exclusive
+						new_lines = {
+							"change M = {}",
+						},
 					},
-				},
-				{
-					id = 2,
-					start_line = 9,
-					end_line = 10,
-					new_lines = {
-						"change = {}",
-						"change = {}",
+					{
+						id = 2,
+						start_line = 9,
+						end_line = 10,
+						new_lines = {
+							"change = {}",
+							"change = {}",
+						},
 					},
 				},
 			},
-
 			-- Support for multiple files
 			-- ["another_file.lua"] = {
 			--   {
@@ -42,8 +41,7 @@ function M.mock_diff()
 		},
 	}
 
-	local diff = Diff:new(diff_res)
-	manager.add(diff)
+	require("ghostwrite.diff").set_batch(diff_res)
 end
 
 return M

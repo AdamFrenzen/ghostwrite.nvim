@@ -3,7 +3,6 @@ local keymaps = require("ghostwrite.diff.keymaps")
 local M = {}
 M.diffs = {}
 M.active_diff = nil
-M.diff_tooltip_id = nil
 M.autocmd_group = "GhostwriteDiffWatcher"
 
 function M.get_diff_under_cursor()
@@ -22,75 +21,56 @@ function M.get_diff_under_cursor()
 	return nil
 end
 
-function M.activate_diff(diff)
-	local function render_tooltip()
-		local current_line = vim.api.nvim_win_get_cursor(0)[1] - 1
-		M.diff_tooltip_id = vim.api.nvim_buf_set_extmark(M.active_diff.bufnr, M.active_diff.ns_id, current_line, 0, {
-			virt_text = {
-				{ " ", "Normal" }, -- padding space for more separation
-				{ "[󰊠 -+] Y/N", "GhostwriteDiffHelper" },
-			},
-			virt_text_pos = "eol", -- aligns the virtual text at the end of the line
-		})
-	end
-
+function M.focus_diff(diff)
 	M.active_diff = diff
-	render_tooltip()
+	M.active_diff.render_tooltip()
 	keymaps.set_keymap(diff.id)
 end
 
-function M.deactivate_diff()
-	local function derender_tooltip()
-		if M.diff_tooltip_id then
-			vim.api.nvim_buf_del_extmark(M.active_diff.bufnr, M.active_diff.ns_id, M.diff_tooltip_id)
-			M.diff_tooltip_id = nil
-		end
-	end
-
-	derender_tooltip()
+function M.unfocus_diff()
+	M.active_diff.derender_tooltip()
 	keymaps.remove_keymap()
 	M.active_diff = nil
 end
 
+function M.set_diff_focus()
+	M.unfocus_diff()
+	local diff = M.get_diff_under_cursor()
+	if diff then
+		M.focus_diff(diff)
+	end
+end
+
+-- TODO: make a buffer_watcher and move the current buffer based watcher their, this file becomes a
 function M.start()
+	--[[
 	-- Create or reuse a unique autocmd group
 	local group = vim.api.nvim_create_augroup(M.autocmd_group, { clear = true }) -- clear so we can easily remove
 
-	-- Watch for cursor movement in normal mode
+	-- Check if cursor is indside a diff whenever the cursor moves
 	vim.api.nvim_create_autocmd({ "CursorMoved" }, {
 		group = group,
-		callback = function()
-			M.deactivate_diff()
-			local diff = M.get_diff_under_cursor()
-			if diff then
-				M.activate_diff(diff)
-			end
-		end,
+		callback = M.set_diff_focus,
 	})
 
 	-- Remove the keymaps when in insert mode
 	vim.api.nvim_create_autocmd("InsertEnter", {
 		group = group,
-		callback = function()
-			M.deactivate_diff()
-		end,
+		callback = M.unfocus_diff,
 	})
 
 	-- Check if cursor is in the line when you leave insert mode
 	vim.api.nvim_create_autocmd("InsertLeave", {
 		group = group,
-		callback = function()
-			M.deactivate_diff()
-			local diff = M.get_diff_under_cursor()
-			if diff then
-				M.activate_diff(diff)
-			end
-		end,
+		callback = M.set_diff_focus,
 	})
+  --]]
+	-- Watch for
 end
 
 function M.update()
-	M.diffs = require("ghostwrite.diff.manager").get_all()
+	-- local file =
+	-- M.diffs = require("ghostwrite.diff").get_diffs_from_file(file)
 end
 
 function M.stop()

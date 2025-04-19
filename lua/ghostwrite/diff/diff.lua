@@ -9,12 +9,11 @@ function Diff:new(opts)
 		file = opts.file,
 		start_line = opts.start_line,
 		end_line = opts.end_line,
-		current = opts.current,
-		suggested = opts.suggested,
+		new_lines = opts.new_lines,
 		--
-		state = "pending",
 		bufnr = vim.api.nvim_get_current_buf(),
 		ns_id = vim.api.nvim_create_namespace("ghostwrite_diff_" .. opts.id),
+		diff_tooltip_id = nil,
 	}, self)
 
 	diff:render()
@@ -27,8 +26,10 @@ function Diff:render()
 	local function highlight_current_lines()
 		-- Iterate over all lines affected by the diff (can be multi-line)
 		for line_number = self.start_line, self.end_line do
-			local line = self.current[line_number]
+			local line = self.new_lines[line_number]
 			local col = 0 -- Track the starting column for each segment
+
+			-- TODO: make a line -> segments fn
 
 			-- Apply highlight to each segment in the line
 			for _, segment in ipairs(line.segments) do
@@ -75,7 +76,26 @@ function Diff:render()
 	render_suggested_lines()
 end
 
+function Diff:render_tooltip()
+	local current_line = vim.api.nvim_win_get_cursor(0)[1] - 1
+	self.diff_tooltip_id = vim.api.nvim_buf_set_extmark(self.bufnr, self.ns_id, current_line, 0, {
+		virt_text = {
+			{ " ", "Normal" }, -- padding space for more separation
+			{ "[󰊠 -+] Y/N", "GhostwriteDiffHelper" },
+		},
+		virt_text_pos = "eol", -- aligns the virtual text at the end of the line
+	})
+end
+
+function Diff:derender_tooltip()
+	if self.diff_tooltip_id then
+		vim.api.nvim_buf_del_extmark(self.bufnr, self.ns_id, self.diff_tooltip_id)
+		self.diff_tooltip_id = nil
+	end
+end
+
 function Diff:clear()
+	self:derender_tooltip()
 	vim.api.nvim_buf_clear_namespace(self.bufnr, self.ns_id, 0, -1)
 end
 
