@@ -23,10 +23,10 @@ function M.register()
 		desc = "Open Ghostwrite side panel chat",
 	})
 
-	vim.api.nvim_create_user_command("GhostwriteDiffTest", require("ghostwrite.diff.mock_backend").mock_diff, {
+	vim.api.nvim_create_user_command("GhostwriteDiffTest", require("ghostwrite.diffs.mock_backend").mock_diff, {
 		desc = "Show a test diff",
 	})
-	vim.api.nvim_create_user_command("GhostwriteDiffTestClear", require("ghostwrite.diff").clear_batch, {
+	vim.api.nvim_create_user_command("GhostwriteDiffTestClear", require("ghostwrite.diffs").clear_batch, {
 		desc = "Clear the test diff",
 	})
 end

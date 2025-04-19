@@ -1,4 +1,4 @@
-local keymaps = require("ghostwrite.diff.keymaps")
+local keymaps = require("ghostwrite.diffs.diff.keymaps")
 
 local M = {}
 M.diffs = {}

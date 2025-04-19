@@ -1,4 +1,4 @@
-local highlights = require("ghostwrite.diff.highlights")
+local highlights = require("ghostwrite.diffs.diff.highlights")
 
 local Diff = {}
 Diff.__index = Diff

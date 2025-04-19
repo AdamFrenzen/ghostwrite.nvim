@@ -41,7 +41,7 @@ function M.mock_diff()
 		},
 	}
 
-	require("ghostwrite.diff").set_batch(diff_res)
+	require("ghostwrite.diffs").set_batch(diff_res)
 end
 
 return M

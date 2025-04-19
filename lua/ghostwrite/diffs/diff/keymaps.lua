@@ -1,5 +1,5 @@
 local config = require("ghostwrite.config").get()
-local actions = require("ghostwrite.diff.actions")
+local actions = require("ghostwrite.diffs.diff.actions")
 
 local M = {}
 
